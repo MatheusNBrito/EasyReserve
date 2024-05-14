@@ -39,15 +39,15 @@ class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(128), unique=True, nullable=False)  # Adicionando a coluna username
-    senha_hash = db.Column(db.String(128), nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128))
 
-    def __init__(self, username, senha):
-        self.username = username
-        self.senha_hash = generate_password_hash(senha)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-    def verificar_senha(self, senha):
-        return check_password_hash(self.senha_hash, senha)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
 
 
 # Criação das tabelas no banco de dados com base nas definições de classe
@@ -62,6 +62,12 @@ def index():
 # Rota para cadastro de quartos
 @app.route("/cadastro", methods=['GET', 'POST'])
 def cadastro():
+    if not is_loged():
+        flash("Acesso negado: apenas logado.", "error")
+        return redirect(url_for('login'))
+    if not is_admin():
+        flash("Acesso negado: apenas administradores.", "error")
+        return redirect(url_for('index'))
     if request.method == "POST":
         numero = request.form.get("numero")
         tipo = request.form.get("tipo")
@@ -79,12 +85,19 @@ def cadastro():
 # Rota para listar quartos
 @app.route("/lista")
 def lista():
+    if not is_loged():
+        flash("Acesso negado: apenas logado.", "error")
+        return redirect(url_for('login'))
+
     quartos = Quarto.query.all()
     return render_template("lista.html", quartos=quartos)
 
 # Rota para excluir quartos
 @app.route("/excluir/<int:id>")
 def excluir(id):
+    if not is_admin():
+        flash("Acesso negado: apenas administradores.", "error")
+        return redirect(url_for('lista'))
     quarto = Quarto.query.get(id)
     db.session.delete(quarto)
     db.session.commit()
@@ -94,7 +107,9 @@ def excluir(id):
 @app.route("/atualizar/<int:id>", methods=['GET', 'POST'])
 def atualizar(id):
     quarto = Quarto.query.get(id)
-
+    if not is_admin():
+        flash("Acesso negado: apenas administradores.", "error")
+        return redirect(url_for('lista'))
     if request.method == "POST":
         numero = request.form.get("numero")
         tipo = request.form.get("tipo")
@@ -111,20 +126,58 @@ def atualizar(id):
 
     return render_template("atualizar.html", quarto=quarto)
 
-# Rota para login
+# Rota para Cadastro
+@app.route('/cadastro_usuario', methods=['GET', 'POST'])
+def cadastro_usuario():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = Usuario(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('login'))  # Redirecionar para a página principal após cadastro
+    return render_template('cadastro_usuario.html')
+
+
+from flask import Flask, render_template, redirect, url_for, request, session, flash
+
+from flask import Flask, render_template, redirect, url_for, request, session, flash
+
+
+def is_admin():
+    return session.get('is_admin', False)
+
+def is_loged():
+    if 'usuario_id' in session:
+        return True
+    return False
+
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
-        senha = request.form.get('senha')
+        password = request.form.get('password')
+
+        if not username or not password:
+            flash('Por favor, preencha todos os campos.', 'error')
+            return render_template('login.html')
 
         usuario = Usuario.query.filter_by(username=username).first()
 
-        if usuario and usuario.verificar_senha(senha):
-            session['usuario_id'] = usuario.id  # Armazena o ID do usuário na sessão
-            return redirect(url_for('index'))  # Redireciona para a página inicial após o login
+        if usuario and usuario.check_password(password):
+            session['usuario_id'] = usuario.id
+            session['username'] = usuario.username
+            session['is_admin'] = username.startswith('@')  # Verifica se é administrador
+            flash('Login bem-sucedido!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Usuário ou senha inválidos.', 'error')
 
     return render_template('login.html')
+
+
 
 # Rota para logout
 @app.route("/logout")

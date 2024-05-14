@@ -5,29 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atualizar Quarto</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+        .main-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 50px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-4">Atualizar Quarto</h1>
-        <form action="{{ url_for('atualizar', id=quarto.id) }}" method="POST">
-            <div class="form-group">
-                <label for="numero">Número:</label>
-                <input type="number" class="form-control" id="numero" name="numero" value="{{ quarto.numero }}" required>
+        <div class="row justify-content-center">
+            <div class="col-md-6 main-container">
+                <h1 class="mt-4">Atualizar Quarto</h1>
+                <form action="{{ url_for('atualizar', id=quarto.id) }}" method="POST">
+                    <div class="form-group">
+                        <label for="numero">Número:</label>
+                        <input type="number" class="form-control" id="numero" name="numero" value="{{ quarto.numero }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo:</label>
+                        <input type="text" class="form-control" id="tipo" name="tipo" value="{{ quarto.tipo }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco">Preço:</label>
+                        <input type="number" class="form-control" id="preco" name="preco" value="{{ quarto.preco }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="banheiros">Quantidade de Banheiros:</label>
+                        <input type="number" class="form-control" id="banheiros" name="banheiros" value="{{ quarto.banheiros }}" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('lista') }}" class="btn btn-secondary">Lista de Quartos</a>
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                </div>
+                    
+                </form>
             </div>
-            <div class="form-group">
-                <label for="tipo">Tipo:</label>
-                <input type="text" class="form-control" id="tipo" name="tipo" value="{{ quarto.tipo }}" required>
-            </div>
-            <div class="form-group">
-                <label for="preco">Preço:</label>
-                <input type="number" class="form-control" id="preco" name="preco" value="{{ quarto.preco }}" required>
-            </div>
-            <div class="form-group">
-                <label for="banheiros">Quantidade de Banheiros:</label>
-                <input type="number" class="form-control" id="banheiros" name="banheiros" value="{{ quarto.banheiros }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Atualizar</button>
-        </form>
+        </div>
     </div>
 </body>
 </html>

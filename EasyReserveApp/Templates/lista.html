@@ -5,9 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Quartos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+        .main-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 50px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 main-container">
         <h1 class="mt-4">Lista de Quartos</h1>
         <table class="table mt-4">
             <thead>
@@ -38,5 +60,7 @@
         </table>
         <a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar</a>
     </div>
+    </div>
+</div>
 </body>
 </html>
