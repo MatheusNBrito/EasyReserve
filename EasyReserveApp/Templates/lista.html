@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Quartos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Lista de Quartos</h1>
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Número</th>
+                    <th>Tipo</th>
+                    <th>Preço</th>
+                    <th>Banheiros</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quarto in quartos %}
+                <tr>
+                    <td>{{ quarto.id }}</td>
+                    <td>{{ quarto.numero }}</td>
+                    <td>{{ quarto.tipo }}</td>
+                    <td>{{ quarto.preco }}</td>
+                    <td>{{ quarto.banheiros }}</td>
+                    <td>
+                        <a href="{{ url_for('atualizar', id=quarto.id) }}" class="btn btn-primary btn-sm">Editar</a>
+                        <a href="{{ url_for('excluir', id=quarto.id) }}" class="btn btn-danger btn-sm">Excluir</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar</a>
+    </div>
+</body>
+</html>
